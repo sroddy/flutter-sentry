@@ -179,7 +179,7 @@ class SentryClient {
     }
 
     final Response response =
-        await _httpClient.post(postUri, headers: headers, body: body);
+        await _httpClient.post(postUri, body, headers: headers);
 
     if (response.statusCode != 200) {
       String errorMessage =
@@ -189,7 +189,9 @@ class SentryClient {
       return new SentryResponse.failure(errorMessage);
     }
 
-    final String eventId = json.decode(response.body)['id'];
+    final responseBody = await response.readAsString();
+
+    final String eventId = json.decode(responseBody)['id'];
     return new SentryResponse.success(eventId: eventId);
   }
 
